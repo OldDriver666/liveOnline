@@ -4,12 +4,15 @@ package org.red5.core;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.annotation.Resource;
+
 import org.red5.server.adapter.MultiThreadedApplicationAdapter;
 import org.red5.server.api.IClient;
 import org.red5.server.api.IConnection;
 import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.ISubscriberStream;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.state.room.RoomState;
 import com.state.user.UserState;
@@ -20,6 +23,12 @@ import com.state.user.UserState;
  * 
  */
 public class Application extends MultiThreadedApplicationAdapter {
+	
+	private JdbcTemplate jdbcTemplate;
+
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	@Override
 	public boolean connect(IConnection conn) {
@@ -46,6 +55,9 @@ public class Application extends MultiThreadedApplicationAdapter {
 		System.out.println(
 				"发布时间:" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(stream.getCreationTime())));
 		System.out.println("****************************** ");
+		
+	    String sql = "insert into room(room_key, room_name) values (?,?)";
+	    jdbcTemplate.update(sql,stream.getPublishedName(),stream.getPublishedName());
 	}
 
 	/**

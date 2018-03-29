@@ -30,6 +30,25 @@
 	<!--
 	Defines the web handler which acts as an applications endpoint
 	-->
-	<bean id="web.handler" class="org.red5.core.Application" />
+	<bean id="web.handler" class="org.red5.core.Application" >
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+ 
+    <!-- Database connection pool bean -->
+	<bean id="dataSource " class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	   <property name="driverClassName"><value>${db.driver}</value></property>
+	   <property name="url"><value>${db.url}</value></property>
+	   <property name="username"><value>${db.username}</value></property>
+	   <property name="password"><value>${db.password}</value></property>
+	   <property name="poolPreparedStatements"><value>true</value></property>
+	   <property name="maxActive"><value>10</value></property>
+	   <property name="maxIdle"><value>10</value></property>
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource">
+            <ref local="dataSource"/>
+        </property>
+    </bean>
  
 </beans>
